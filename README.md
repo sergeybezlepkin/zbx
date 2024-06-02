@@ -87,12 +87,12 @@ Zabbix — это свободное программное обеспечени
 
 ### Установка Docker
 
-Docker позаботилась о своих новых пользователях и предлагает установку в одну команду:
+Docker позаботилась о своих новых пользователях (менеджера пакетов apt) и предлагает установку в одну команду:
 
 ```sh
 curl https://get.docker.com | sh
 ```
-Файл [installdocker](images/micro.png), для запуска в Oracle Linux (RHEL) 
+Файл [installdocker_dnf](/install_docker_dnf), для запуска c пакетным менеджером dnf/yum
 
 ```sh
 #!/bin/bash
