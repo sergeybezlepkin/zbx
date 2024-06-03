@@ -1,3 +1,0 @@
-#ZBX_SNMP_TRAP_DATE_FORMAT= #By default -"+%Y%m%d.%H%M%S"
-#ZBX_SNMP_TRAP_FORMAT= #By default, value is "\n"
-#ZBX_SNMP_TRAP_USE_DNS=false
