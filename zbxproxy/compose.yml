@@ -1,0 +1,28 @@
+version: "3.5"
+services:
+  zbxproxysqlite3:
+    image: zabbix/zabbix-proxy-sqlite3
+    container_name: zbxproxy-sqlite3
+    restart: on-failure:3
+    ports:
+      - "30051:10051"
+    env_file:
+      - ./env_vars/env_zbxproxy
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./conf/usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:rw
+      - ./conf/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
+      - ./conf/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+      - ./conf/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
+      - ./conf/var/lib/zabbix/ssl/certs:/var/lib/zabbix/ssl/certs:rw
+      - ./conf/var/lib/zabbix/ssl/keys:/var/lib/zabbix/ssl/keys:rw
+      - ./conf/var/lib/zabbix/ssl/ssl_ca:/var/lib/zabbix/ssl/ssl_ca:rw
+      - ./conf/var/lib/zabbix/snmptraps:/var/lib/zabbix/snmptraps:rw
+      - ./conf/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:rw
+    mem_limit: 512m
+    mem_reservation: 256m
+    networks:
+      - zbx_proxy
+networks:
+ zbx_proxy:
+  driver: bridge
