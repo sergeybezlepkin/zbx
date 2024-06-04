@@ -520,6 +520,8 @@ docker compose up -d
 ```
 # Прокси-сервер Nginx
 
+![nginx](images/nginx.png)
+
 Для запуска нужно убрать решетку (#) в файле [compose.yml.](/compose.yml) с сервиса `nginx`, и добавить (#) на порты в контейнере `zbxweb`. Запускаем: 
 ```sh
 docker compose up -d
