@@ -1,8 +1,8 @@
 version: '3.5'
 services:
   kibana:
-    image: kibana:7.17.15
-    container_name: zbxkibana
+    image: kibana:7.17.21
+    container_name: zbxkibana7.17.21
     restart: always    
     ports:
        - '5601:5601'
