@@ -1,6 +1,6 @@
 #!/bin/bash
 project_path="$PWD/zbx"
-folders=("/config/var/lib/zabbix/alertscripts" "/config/var/lib/zabbix/externalscripts" "/config/var/lib/zabbix/dbscripts" "/config/var/lib/zabbix/export" "/config/var/lib/zabbix/modules" "/config/var/lib/zabbix/enc" "/config/var/lib/zabbix/ssh_keys" "/config/var/lib/zabbix/mibs" "/config/var/lib/zabbix/snmptraps" "/config/etc/ssl/nginx" "/config/usr/share/zabbix/modules" "/config/etc/zabbix/zabbix_agentd.d" "/zbxproxy/env_vars" "/zbxproxy/conf/usr/lib/zabbix/externalscripts" "/zbxproxy/conf/var/lib/zabbix/modules" "/zbxproxy/conf/var/lib/zabbix/enc" "/zbxproxy/conf/var/lib/zabbix/ssh_keys" "/zbxproxy/conf/var/lib/zabbix/ssl/certs" "/zbxproxy/conf/var/lib/zabbix/ssl/keys" "/zbxproxy/conf/var/lib/zabbix/ssl/ssl_ca" "/zbxproxy/conf/var/lib/zabbix/snmptraps" "/zbxproxy/conf/var/lib/zabbix/mibs" "/db/data" "/els" "/nginx/data" "/nginx/letsencrypt" "/grafana/plugins" "/kibana" "/logs")
+folders=("/config/var/lib/zabbix/alertscripts" "/config/var/lib/zabbix/externalscripts" "/config/var/lib/zabbix/dbscripts" "/config/var/lib/zabbix/export" "/config/var/lib/zabbix/modules" "/config/var/lib/zabbix/enc" "/config/var/lib/zabbix/ssh_keys" "/config/var/lib/zabbix/mibs" "/config/var/lib/zabbix/snmptraps" "/config/etc/ssl/nginx" "/config/usr/share/zabbix/modules" "/config/etc/zabbix/zabbix_agentd.d" "/zbxproxy/env_vars" "/zbxproxy/conf/usr/lib/zabbix/externalscripts" "/zbxproxy/conf/var/lib/zabbix/modules" "/zbxproxy/conf/var/lib/zabbix/enc" "/zbxproxy/conf/var/lib/zabbix/ssh_keys" "/zbxproxy/conf/var/lib/zabbix/ssl/certs" "/zbxproxy/conf/var/lib/zabbix/ssl/keys" "/zbxproxy/conf/var/lib/zabbix/ssl/ssl_ca" "/zbxproxy/conf/var/lib/zabbix/snmptraps" "/zbxproxy/conf/var/lib/zabbix/mibs" "/db/data" "/els" "/nginx/data" "/nginx/letsencrypt" "/grafana/plugins" "/grafana/config" "/kibana" "/logs")
 mkdir -p "$project_path"
 for folder in "${folders[@]}"; do
   mkdir -p "$project_path$folder"
@@ -16,6 +16,11 @@ for file in "${files[@]}"; do
 done
  project_path="$PWD/zbx/zbxproxy/env_vars"
  files=("env_zbxproxy")
+ for file in "${files[@]}"; do
+  touch "$project_path/$file"
+ done
+project_path="$PWD/zbx/grafana/config"
+ files=("grafana.ini")
  for file in "${files[@]}"; do
   touch "$project_path/$file"
  done
