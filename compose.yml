@@ -20,25 +20,25 @@ services:
       start_period: 5s
     networks:
       - zbx
-  zbxelastic:
-    image: elasticsearch:7.17.21
-    container_name: zbxelasticdb7.17.21
-    restart: always
-    environment:
-      - cluster.name=zabbix-elastic
-      - node.name=zbxelastic:9200
-      - cluster.initial_master_nodes=zbxelastic:9200
-      - transport.host=0.0.0.0
-      - ingest.geoip.downloader.enabled=false
-    volumes:
-      - ./els:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD", "sh", "-c", "ps aux | grep elastic || exit 1"]
-      interval: 20s
-      timeout: 10s
-      retries: 2
-    networks:
-      - zbx
+#  zbxelastic:
+#    image: elasticsearch:7.17.21
+#    container_name: zbxelasticdb7.17.21
+#    restart: always
+#    environment:
+#      - cluster.name=zabbix-elastic
+#      - node.name=zbxelastic:9200
+#      - cluster.initial_master_nodes=zbxelastic:9200
+#     - transport.host=0.0.0.0
+#      - ingest.geoip.downloader.enabled=false
+#    volumes:
+#      - ./els:/usr/share/elasticsearch/data
+#    healthcheck:
+#      test: ["CMD", "sh", "-c", "ps aux | grep elastic || exit 1"]
+#      interval: 20s
+#     timeout: 10s
+#      retries: 2
+#    networks:
+#      - zbx
   zbxserver:
     image: zabbix/zabbix-server-pgsql:alpine-latest
     container_name: zbxserver-pgsql
@@ -119,33 +119,33 @@ services:
         condition: service_healthy
       zbxelastic:
         condition: service_healthy
-  zbxagent2:
-    image: zabbix/zabbix-agent2:alpine-latest
-    container_name: zbxagent2
-    restart: always
-    env_file:
-      - ./env_vars/env_agent2
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:rw
-      - ./config/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
-      - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
-      - ./config/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
-    privileged: true
-    pid: "host"
-    stop_grace_period: 5s
-    healthcheck:
-      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_agent2 || exit 1"]
-      interval: 20s
-      timeout: 10s
-      retries: 2
-      start_period: 5s
-    mem_limit: 128m
-    mem_reservation: 64m
-    networks:
-      - zbx
+#  zbxagent2:
+#    image: zabbix/zabbix-agent2:alpine-latest
+#    container_name: zbxagent2
+#    restart: always
+#    env_file:
+#      - ./env_vars/env_agent2
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /etc/timezone:/etc/timezone:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - ./config/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:rw
+#      - ./config/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
+#      - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+#      - ./config/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
+#    privileged: true
+#    pid: "host"
+#    stop_grace_period: 5s
+#    healthcheck:
+#      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_agent2 || exit 1"]
+#      interval: 20s
+#      timeout: 10s
+#      retries: 2
+#      start_period: 5s
+#    mem_limit: 128m
+#    mem_reservation: 64m
+#    networks:
+#      - zbx
   zbxjava:
     image: zabbix/zabbix-java-gateway:alpine-latest
     container_name: zbxjava
@@ -205,30 +205,30 @@ services:
     mem_reservation: 256m
     networks:
       - zbx
-  nginx:
-    image: jc21/nginx-proxy-manager:latest
-    container_name: nginx-proxy
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-      - "32005:81" # Admin Web Port
-    environment:
-      - DISABLE_IPV6='true'
-      - X_FRAME_OPTIONS="sameorigin"
-    volumes:
-      - ./nginx/data:/data:rw
-      - ./nginx/letsencrypt:/etc/letsencrypt:rw
-    healthcheck:
-      test: ["CMD", "/bin/check-health"]
-      interval: 20s
-      timeout: 10s
-      retries: 2
-      start_period: 5s
-    mem_limit: 512m
-    mem_reservation: 256m
-    networks:
-      - zbx
+#  nginx:
+#    image: jc21/nginx-proxy-manager:latest
+#    container_name: nginx-proxy
+#    restart: always
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#      - "32005:81" # Admin Web Port
+#    environment:
+#      - DISABLE_IPV6='true'
+#      - X_FRAME_OPTIONS="sameorigin"
+#    volumes:
+#      - ./nginx/data:/data:rw
+#      - ./nginx/letsencrypt:/etc/letsencrypt:rw
+#    healthcheck:
+#      test: ["CMD", "/bin/check-health"]
+#      interval: 20s
+#      timeout: 10s
+#      retries: 2
+#      start_period: 5s
+#    mem_limit: 512m
+#    mem_reservation: 256m
+#    networks:
+#      - zbx
 volumes:
   els: {}
 networks:
