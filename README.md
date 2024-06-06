@@ -445,7 +445,7 @@ sudo usermod -aG docker $user
 | ZBX_TIMEOUT             | Время ожидания ответа от мониторируемых узлов                                             |
 | ZBX_DEBUGLEVEL          | Уровень отладки системы мониторинга (в данном случае установлен уровень отладки как "DEBUG") |
 
-#### Шлюз Java Zabbix
+#### SNMP-ловушка Zabbix
 
 Данные будут тут: zbx/env_vars/env_snmp
 
