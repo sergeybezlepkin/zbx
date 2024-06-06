@@ -3,7 +3,7 @@ services:
   zbxproxysqlite3:
     image: zabbix/zabbix-proxy-sqlite3
     container_name: zbxproxy-sqlite3
-    restart: on-failure:3
+    restart: restart
     ports:
       - "30051:10051"
     env_file:
