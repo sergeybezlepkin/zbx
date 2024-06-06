@@ -514,7 +514,8 @@ docker compose up -d
 Zabbix прокси [поддерживает следующие базы данных из документации.](https://www.zabbix.com/documentation/current/ru/manual/concepts/proxy) 
 Разворачивать будем легковесный компонент, с базой SQLite без дополнительных настроек. 
 Переменные окружения лежат уже тут: [env_zbxproxy](zbxproxy/env_vars/env_zbxproxy). 
-Вот в помощь [документация.](https://www.zabbix.com/documentation/6.0/ru/manual/appendix/config/zabbix_proxy) Код лежит в файле [compose.yml.](zbxproxy/compose.yml) Переходим в каталог проекта и запускаем: 
+Вот в помощь [документация.](https://www.zabbix.com/documentation/6.0/ru/manual/appendix/config/zabbix_proxy) 
+Код лежит в файле [compose.yml.](zbxproxy/compose.yml) Переходи в каталог проекта и запускай: 
 ```sh
 docker compose up -d
 ```
@@ -522,7 +523,7 @@ docker compose up -d
 
 ![nginx](images/nginx.png)
 
-Для запуска нужно убрать решетку (#) в файле [compose.yml.](/compose.yml) с сервиса `nginx`, и добавить (#) на порты в контейнере `zbxweb`. Запускаем: 
+Для запуска нужно убрать решетку (#) в файле [compose.yml.](/compose.yml) с сервиса `nginx`, и добавить (#) на порты в контейнере `zbxweb`. И запускай: 
 ```sh
 docker compose up -d
 ```
@@ -538,3 +539,46 @@ Forward Hostname / IP - IP контейнера zbxweb и порт 8080
 Save
 
 Переходим по своему адресу на порт 80 и тебя приветствуем веб-панель Zabbix. Доступ по умолчанию `Admin` с паролем `zabbix`.
+
+# Elasticsearch
+
+![elastic](images/elastic.png)
+
+Elasticsearch - это аналитическая, поисковая система, в которой можно хранить, искать и анализировать полнотекстовые данные в режиме реального времени. Это один из компонентов в общей системе ELK. Система мониторинга Zabbix в экспериментальном режиме поддерживает хранение данных внутри этой системы. Как это организованно? Запускаем сервер с базой данных Zabbix и систему Elasticsearch, и в конфигурации сервера и веб-интерфейса задаем нужный тип данных, например “log”,“text” для хранения в Elasticsearch. А “целое число” будем хранить например в базе данных Zabbix. [Вот документация Zabbix на этот счет](https://www.zabbix.com/documentation/6.4/ru/manual/appendix/install/elastic_search_setup?hl=Elastic%2Celastic). Теперь с файлами журналов можно работать по другому, расширив возможности в рамках одной системы мониторинга.
+
+Книг по изучению данной системы на русском языке почти и нет, у меня есть вот эти 2, например: [”Elasticsearch. Kibana. Logstash и поисковые системы нового поколения”](https://goo.su/ilre2y), или [“Активное выявление угроз с Elastic Stack”](https://goo.su/VQJnZAz). Рекомендую ролики [с официального Youtube канала](https://goo.su/bCuMUJ) разработчика Elastic. Прежде чем запустить проект делаю настройки конфигурации как написано [в документации Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/system-config.html), нужные настройки ниже, т.к. будет запущен контейнер.
+
+```sh
+sudo swapoff -a
+sudo nano /etc/sysctl.conf
+vm.max_map_count=262144
+```
+**После внесение этих изменений нужно перезапустить машину**
+
+После перезапуска машины внутри файла [compose.yml.](/compose.yml) убираем решетку (#) с сервисов `zbxelastic`, `zbxserver`, `zbxweb`. В каталоге переменных окружения, по пути zbx/env_vars в файле: `env_zbxsrv` убираем # с параметров:
+
+`
+ZBX_HISTORYSTORAGEURL=http://zbxelastic:9200 
+ZBX_HISTORYSTORAGETYPES=text,log 
+ZBX_HISTORYSTORAGEDATEINDEX=1
+`
+
+Выбери нужны тип данных тебе. Потом, внутри файла [compose.yml.](/compose.yml), убираем решетку (#) c сервисов `zbxelastic`, `zbxserver`, `zbxweb`. И запускай: 
+```sh
+docker compose up -d
+```
+
+После запуска нужно добавить [конвейер загрузки типа данных](https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html), в моей конфигурации text, log. Для визуализации данных внутри общей системы ELK, есть панель KIbana. Из панели Kibana нужно отправить запрос, для создания конвейера, бери код из файла [log-pipline](els/log-pipline) или [text-pipline](els/text-pipline) в каталоге els/. Переходим в панель - Management - Dev tools и делаем запрос. Что тут происходит? Создаем тип данных для конвейера, в конвейер входят процессоры которые должны быть выполнены перед обработкой документа, а документы проиндексированы. 
+
+Можно использовать только имя индекса на основе даты, но тогда систему Elasticsearch, как ресурс хранения, невозможно добавить в Grafana. Добавлю процессор “data” с полем “timestamp” и можно будет смотреть из Grafana, поля уже в файлах `log-pipline` и `text-pipline`. О Grafana будет дальше. 
+
+Для просмотра полученных данных, читаем ниже и запускаем Kibana. Вся текущая информация по типу будет складываться в один документ.
+
+# Kibana
+
+![kibana](images/kibana.png)
+
+Кibana - это открытое ПО по визуализации данных, или еще один компонент общей системы ELK. Книги выше, о всем ELK в том числе и о Kibana. Есть документация и свободный доступ до нее, но нету русского языка. 
+
+В каталоге проекта, есть каталог kibana/, через файл [compose.yml](kibana/compose.yml) можно запустить панель, которая подключится к уже запущенной Elasticsearch. 
+Переходи на свой адрес, порт 5601. У меня один узел системы Elasticsearch, и при таких условиях может сменится статус состояния узла с “зеленого” в “желтый”. По умолчанию система делает “копии”, и кладет их на другой узел в кластере. У меня один узел в кластере, и “копия” на одном узеле, что и вызывает “желтый” статус. Надо выключить “копии” и статус вернется в “зеленый”. Но и помнить данные только на одном узле. Переходим в панель KIbana - Stack Management - Index Management - logYY-MM-DD - Edit settings. Находим строку `"index.number_of_replicas": "1"` меняем на `0`. Осталось добавить шаблон индекса, и можно обозревать данные. [Бери настройки из официальной документации.](https://www.elastic.co/guide/en/kibana/7.17/index-patterns.html).
