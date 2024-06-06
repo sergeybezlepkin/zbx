@@ -582,3 +582,47 @@ docker compose up -d
 
 В каталоге проекта, есть каталог kibana/, через файл [compose.yml](kibana/compose.yml) можно запустить панель, которая подключится к уже запущенной Elasticsearch. 
 Переходи на свой адрес, порт 5601. У меня один узел системы Elasticsearch, и при таких условиях может сменится статус состояния узла с “зеленого” в “желтый”. По умолчанию система делает “копии”, и кладет их на другой узел в кластере. У меня один узел в кластере, и “копия” на одном узеле, что и вызывает “желтый” статус. Надо выключить “копии” и статус вернется в “зеленый”. Но и помнить данные только на одном узле. Переходим в панель KIbana - Stack Management - Index Management - logYY-MM-DD - Edit settings. Находим строку `"index.number_of_replicas": "1"` меняем на `0`. Осталось добавить шаблон индекса, и можно обозревать данные. [Бери настройки из официальной документации.](https://www.elastic.co/guide/en/kibana/7.17/index-patterns.html).
+
+# Grafana
+
+![grafana](images/grafana.png)
+
+Графики можно строить внутри Zabbix, но это система мониторинга, и для визуализации данных есть специализированное ПО. Grafana - открытое ПО визуализации данных из разных источников. Книг на русском языке - нет, может ты читаешь на английском и хочешь перевести и выложить? А в другом случаи, на официальный сайт из Беларуси войти можно только из частной сети другой страны. Рекомендую ролики с официального [Youtube канала](https://www.youtube.com/@Grafana/playlists). Для настройки обмена данными между Zabbix и Grafana [написан плагин](https://github.com/grafana/grafana-zabbix/releases). Использовать плагины и панели можно загрузив и установив вручную, из интерфейса такой возможности больше нет, получаем [ошибку ответа сервера 451](https://developer.mozilla.org/ru/docs/Web/HTTP/Status/451), после [24 февраля](https://goo.su/VqkR). 
+
+Переходим в каталог `/plugins`  и загружаем плагин: 
+
+```sh
+wget https://github.com/grafana/grafana-zabbix/releases/download/v4.4.8/alexanderzobnin-zabbix-app-4.4.8.linux_amd64.zip
+unzip alexanderzobnin-zabbix-app-4.4.8.linux_amd64.zip
+```
+Установка плагина произойдет автоматически, после запуска сервиса. Используй файл [compose.yml](grafana/compose.yml)
+Переходим на свой адрес порт 3000. Доступ по умолчанию Admin с паролем admin.
+
+Переходим в настройки, включаем плагин и подключаем Zabbix. Выбираем в поиске источник данных: Zabbix и заполняем поля
+Для примера:
+
+- В поле “Connection”: URL: http://IPконтейнера/api_jsonrpc.php
+- В поле “Authentication”: No authentication
+- В поле “Zabbix Connection”: User and password: Admin and zabbix
+- В поле “Additional settings”: Timeout: 30
+- В поле “Zabbix API”: Cache TTL: 1h. Timeout: 30
+- В поле “Trends”: Enable Trends: Yes, After: 7d, Range: 4d
+
+Для подключения Elasticsearch, сторонние плагины не нужны, выбираем источник данных: Elasticsearch и заполняем поля
+
+Для примера: 
+
+- В поле “Connection”: URL: http://IPконтейнера:9200
+- В поле “Authentication”: No authentication 
+- В поле “Additional settings”: Timeout: 30
+- Elasticsearch details:
+  - Index name: [zlog]YYYY-MM-DD
+  - Pattern: Yearly
+  - Time field name: timestamp
+- Logs:
+  - Message field name: _source
+
+Grafana как панель популярна, и является уже частью систем мониторинга, поэтому написано много панелей, плагинов для визуализации данных. Через частную сеть можно загрузить панель [здесь](https://grafana.com/grafana/dashboards/), файл в формате JSON. В каталоге проекта найдешь файл [dashboard_zabbix.json](grafana/dashboard_zabbix.json), там код который добавит к тебе панель о состоянии сервера Zabbix, первая по числу загрузок. 
+Переходим в Dashboards - Create Dashboards - Import a dashboard - в окно Import via dashboard JSON model добавляем код из файла. 
+
+Вот и все, далее решение со звездочкой.
