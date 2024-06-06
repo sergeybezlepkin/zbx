@@ -1,0 +1,25 @@
+PUT /_ingest/pipeline/log-pipeline
+{
+
+  "description": "Pipeline log with Zabbix",
+  "processors": [
+  
+    {
+
+      "date_index_name": {
+        "field": "clock",
+        "date_formats": ["UNIX"],
+        "index_name_prefix": "zbxlog",
+        "date_rounding": "y"
+      }
+    },
+    {
+
+      "date": {
+        "field": "clock",
+        "target_field": "timestamp",
+        "formats": ["UNIX"]
+      }
+    }
+  ]
+}
