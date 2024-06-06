@@ -18,12 +18,17 @@ done
  files=("env_zbxproxy")
  for file in "${files[@]}"; do
   touch "$project_path/$file"
- done
+done
 project_path="$PWD/zbx/grafana/config"
- files=("grafana.ini")
+ files=("grafana.ini" ".grafana_db_user" ".grafana_db_pass")
  for file in "${files[@]}"; do
   touch "$project_path/$file"
- done
+  if [ "$file" = ".grafana_db_user" ]; then
+    echo "admin" > "$project_path/$file"
+  elif [ "$file" = ".grafana_db_pass" ]; then
+    echo "supergrafana" > "$project_path/$file"
+  fi
+done
 project_path="$PWD/zbx/swarm/"
 folders=("config/var/lib/zabbix/alertscripts" "/config/var/lib/zabbix/externalscripts" "/config/var/lib/zabbix/dbscripts" "/config/var/lib/zabbix/export" "/config/var/lib/zabbix/modules" "/config/var/lib/zabbix/enc" "/config/var/lib/zabbix/ssh_keys" "/config/var/lib/zabbix/mibs" "/config/var/lib/zabbix/snmptraps" "/config/etc/ssl/nginx" "/config/usr/share/zabbix/modules" "/config/etc/zabbix/zabbix_agentd.d" "/db/data" "/els" "/nginx/data" "/nginx/letsencrypt" "/grafana/plugins" "/kibana" "/logs")
 mkdir -p "$project_path"
