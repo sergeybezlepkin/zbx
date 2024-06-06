@@ -79,8 +79,8 @@ services:
     depends_on:
       zbxtimedb:
         condition: service_healthy
-      zbxelastic:
-        condition: service_healthy
+#      zbxelastic:
+#        condition: service_healthy
   zbxweb:
     image: zabbix/zabbix-web-nginx-pgsql:alpine-latest
     container_name: zbxweb-nginx
@@ -117,8 +117,8 @@ services:
         condition: service_healthy
       zbxtimedb:
         condition: service_healthy
-      zbxelastic:
-        condition: service_healthy
+#      zbxelastic:
+#       condition: service_healthy
 #  zbxagent2:
 #    image: zabbix/zabbix-agent2:alpine-latest
 #    container_name: zbxagent2
