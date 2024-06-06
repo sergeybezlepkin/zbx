@@ -2,7 +2,7 @@ version: "3.5"
 services:
   weblogs:
     container_name: weblogs
-    image: amir20/dozzle:v6.0.1
+    image: amir20/dozzle:latest
     ports:
       - "8888:8080"
     volumes:
