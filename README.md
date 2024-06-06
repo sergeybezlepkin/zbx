@@ -593,6 +593,8 @@ docker compose up -d
 
 ```sh
 wget https://github.com/grafana/grafana-zabbix/releases/download/v4.4.8/alexanderzobnin-zabbix-app-4.4.8.linux_amd64.zip
+```
+```sh
 unzip alexanderzobnin-zabbix-app-4.4.8.linux_amd64.zip
 ```
 Установка плагина произойдет автоматически, после запуска сервиса. Используй файл [compose.yml](grafana/compose.yml)
