@@ -576,7 +576,7 @@ docker compose up -d
 
 # Kibana
 
-![kibana](images/kibana.png)
+![kibana](images/kibana1_new.png)
 
 Кibana - это открытое ПО по визуализации данных, или еще один компонент общей системы ELK. Книги выше, о всем ELK в том числе и о Kibana. Есть документация и свободный доступ до нее, но нету русского языка. 
 
