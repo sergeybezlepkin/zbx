@@ -512,7 +512,7 @@ docker compose up -d
 
 Для Zabbix прокси требуется отдельная база данных. 
 Zabbix прокси [поддерживает следующие базы данных из документации.](https://www.zabbix.com/documentation/current/ru/manual/concepts/proxy) 
-Разворачивать будем легковесный компонент, с базой SQLite без дополнительных настроек. 
+Разворачивать буду легковесный компонент, с базой SQLite без дополнительных настроек. 
 Переменные окружения лежат уже тут: [env_zbxproxy](zbxproxy/env_vars/env_zbxproxy). 
 Вот в помощь [документация.](https://www.zabbix.com/documentation/6.0/ru/manual/appendix/config/zabbix_proxy) 
 Код лежит в файле [compose.yml.](zbxproxy/compose.yml) Переходи в каталог проекта и запускай: 
