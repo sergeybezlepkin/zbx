@@ -5,7 +5,7 @@ services:
     container_name: zbxkibana7.17.21
     restart: always    
     ports:
-       - '5601:5601'
+       - "35601:5601"
     environment:
        - ELASTICSEARCH_HOSTS=http://zbxelastic:9200
     healthcheck:
