@@ -664,13 +664,13 @@ Zabbix предлагает встроенное решение высокой �
 На машине 1 - будет мастер-узлом, добавлю правило в брандмауэр, открываю порты: `2377/tcp`, `7946/tcp`, `4789/udp`
 
 ```sh
-sudo firewall-cmd --zone=docker --add-port=2377/tcp --add-port=7946/tcp --add-port=4789/udp --permanent
+sudo firewall-cmd --add-port=2377/tcp --add-port=7946/tcp --add-port=4789/udp --permanent
 ```
 ```sh
 sudo firewall-cmd –reload
 ```
 
-Машина 2 и 3 будут рабочими-узлами
+Машина 2 и 3 будут рабочими-узлами, открываю порты на машинах:
 
 ```sh
 sudo ufw allow 2377/tcp
@@ -689,5 +689,10 @@ docker swarm init
 ```
 После запуска команды терминал выдаст тебе информацию, как присоединять в кластер еще машины с платформой Docker, вот ниже пример сообщения: 
 
-*docker swarm join --token SWMTKN-1-4wxgbjj0t0mrfzcn8or1crrip4fqpca88musnnfioreeid14y4-95lalmkuj3d1r1qe0deb6kfaq 192.168.100.86:2377*
+*To add a worker to this swarm, run the following command:*
 
+*docker swarm join --token SWMTKN-1-5wwafp7ttqmq59z2lp6wrhb0q15pg3hziz6pcf64n6iz15gebu-2jj2g9d8lsarm57aceqb0djbf 192.168.100.23:2377*
+
+*To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.*
+
+Или запускаем команду для присоединения: `docker swarm join-token worker` or `manager`. 
