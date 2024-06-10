@@ -19,7 +19,7 @@
     - [Сервер Zabbix](#Сервер-Zabbix)
     - [Прокси-сервер Zabbix](#Прокси-сервер-Zabbix)
     - [Веб-сервер Zabbix](#Веб-сервер-Zabbix)
-    - [Агент Zabbix](#Агент-Zabbix)
+    - [Агент](#Агент)
     - [Шлюз Java Zabbix](#Шлюз-Java-Zabbix)
     - [SNMP-ловушка Zabbix](#SNMP-ловушка-Zabbix)
     - [Веб-сервис Zabbix](#Веб-сервис-Zabbix)
