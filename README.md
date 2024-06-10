@@ -27,7 +27,6 @@
     - [Панели визуализации](#Панели-визуализации)
 - [Запускаем Zabbix](#Запускаем-Zabbix)
 - [Прокси Zabbix](#Прокси-Zabbix)
-- [Агент Zabbix](#Агент)
 - [Прокси-Nginx](#Прокси-Nginx)
 - [Elasticsearch](#Elasticsearch)
 - [Kibana](#Kibana)
@@ -520,8 +519,6 @@ Zabbix прокси [поддерживает следующие базы дан
 ```sh
 docker compose up -d
 ```
-
-# Агент Zabbix
 
 # Прокси Nginx
 
