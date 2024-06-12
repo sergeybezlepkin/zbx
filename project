@@ -20,7 +20,7 @@ done
   touch "$project_path/$file"
 done
 project_path="$PWD/zbx/grafana/config"
- files=("grafana.ini" ".grafana_db_user" ".grafana_db_pass")
+ files=("grafana.ini" ".grafana_db_user" ".grafana_db_pass" "env_grafana")
  for file in "${files[@]}"; do
   touch "$project_path/$file"
   if [ "$file" = ".grafana_db_user" ]; then
