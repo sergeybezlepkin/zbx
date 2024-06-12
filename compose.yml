@@ -37,6 +37,7 @@ services:
 #      interval: 20s
 #     timeout: 10s
 #      retries: 2
+#    mem_limit: 4096m
 #    networks:
 #      - zbx
   zbxserver:
