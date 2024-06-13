@@ -28,6 +28,10 @@ project_path="$PWD/zbx/grafana/config"
   elif [ "$file" = ".grafana_db_pass" ]; then
     echo "supergrafana" > "$project_path/$file"
   fi
+ project_path="$PWD/zbx/els"
+ files=("env_zbxelastic")
+ for file in "${files[@]}"; do
+  touch "$project_path/$file"
 done
 project_path="$PWD/zbx/swarm/"
 folders=("config/var/lib/zabbix/alertscripts" "/config/var/lib/zabbix/externalscripts" "/config/var/lib/zabbix/dbscripts" "/config/var/lib/zabbix/export" "/config/var/lib/zabbix/modules" "/config/var/lib/zabbix/enc" "/config/var/lib/zabbix/ssh_keys" "/config/var/lib/zabbix/mibs" "/config/var/lib/zabbix/snmptraps" "/config/etc/ssl/nginx" "/config/usr/share/zabbix/modules" "/config/etc/zabbix/zabbix_agentd.d" "/db/data" "/els" "/nginx/data" "/nginx/letsencrypt" "/grafana/plugins" "/kibana" "/logs")
