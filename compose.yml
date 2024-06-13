@@ -25,7 +25,7 @@ services:
 #    container_name: zbxelasticdb7.17.21
 #    restart: always
 #    env_file:
-#      - ./els/env_zbxelastic
+#      - ./els/config/env_zbxelastic
 #    volumes:
 #      - ./els:/usr/share/elasticsearch/data
 #    healthcheck:
