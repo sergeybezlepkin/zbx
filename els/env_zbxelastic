@@ -1,0 +1,6 @@
+cluster.name=zabbix-elastic
+node.name=zbxelastic:9200
+cluster.initial_master_nodes=zbxelastic:9200
+ingest.geoip.downloader.enabled=false
+xpack.security.enabled=false
+cluster.routing.allocation.disk.watermark.enable_for_single_data_node=true
