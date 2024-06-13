@@ -210,9 +210,8 @@ services:
 #      - "80:80"
 #      - "443:443"
 #      - "32005:81" # Admin Web Port
-#    environment:
-#      - DISABLE_IPV6='true'
-#      - X_FRAME_OPTIONS="sameorigin"
+#    env_file:
+#      - ./nginx/config/env_nginx
 #    volumes:
 #      - ./nginx/data:/data:rw
 #      - ./nginx/letsencrypt:/etc/letsencrypt:rw
