@@ -24,12 +24,8 @@ services:
 #    image: elasticsearch:7.17.21
 #    container_name: zbxelasticdb7.17.21
 #    restart: always
-#    environment:
-#      - cluster.name=zabbix-elastic
-#      - node.name=zbxelastic:9200
-#      - cluster.initial_master_nodes=zbxelastic:9200
-#     - transport.host=0.0.0.0
-#      - ingest.geoip.downloader.enabled=false
+#    env_file:
+#      - ./els/env_zbxelastic
 #    volumes:
 #      - ./els:/usr/share/elasticsearch/data
 #    healthcheck:
