@@ -1,0 +1,3 @@
+POSTGRES_USER_FILE=/run/secrets/grafana_db_user
+POSTGRES_PASSWORD_FILE=/run/secrets/grafana_db_pass
+POSTGRES_DB=grafana
