@@ -1,0 +1,56 @@
+version: '3.7'
+services:
+ zbxnode2:
+  image: zabbix/zabbix-server-pgsql:alpine-latest
+  deploy:
+    replicas: 1
+    placement:
+      constraints: [node.role == worker]
+    resources:
+      limits:
+        memory: 1G
+      reservations:
+        memory: 512M
+    restart_policy:
+        condition: on-failure
+  ports:
+    - "20051:10051"
+  env_file:
+    - ./env_vars/env_zbxnode2
+    - ./env_vars/env_db
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/timezone:/etc/timezone:ro
+    - ./config/var/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:rw
+    - ./config/var/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:rw
+    - ./config/var/lib/zabbix/dbscripts:/var/lib/zabbix/dbscripts:rw
+    - ./config/var/lib/zabbix/export:/var/lib/zabbix/export:rw
+    - ./config/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
+    - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+    - ./config/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
+    - ./config/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:rw
+    - ./config/var/lib/zabbix/snmptraps:/var/lib/zabbix/snmptraps:rw
+ #   - ./config/.ZBX_DB_CA_FILE:/run/secrets/root-ca.pem:ro
+ #   - ./config/.ZBX_DB_CERT_FILE:/run/secrets/client-cert.pem:ro
+ #   - ./config/.ZBX_DB_KEY_FILE:/run/secrets/client-key.pem:ro
+  secrets:
+    - db_user
+    - db_password
+  healthcheck:
+    test: ["CMD", "sh", "-c", "ps aux | grep zabbix_server || exit 1"]
+    interval: 20s
+    timeout: 10s
+    retries: 2
+    start_period: 5s
+  networks:
+    - cluster
+  depends_on:
+    - zbxnode1
+networks:
+  cluster:
+    driver: overlay
+secrets:
+  db_user:
+    file: ./env_vars/.db_user
+  db_password:
+    file: ./env_vars/.db_password
