@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  grafanadb:
+    image: postgres:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    env_file:
+      - ./config/env_dbgrafana
+    secrets:
+      - grafana_db_user
+      - grafana_db_pass
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 20s
+      timeout: 10s
+      retries: 2
+      start_period: 5s
+    networks:
+      - cluster
+volumes:
+  postgres-data:
+networks:
+  cluster:
+    driver: overlay
+secrets:
+  grafana_db_user:
+    file: ./config/.grafana_db_user
+  grafana_db_pass:
+    file: ./config/.grafana_db_pass
