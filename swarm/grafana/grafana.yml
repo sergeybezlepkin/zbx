@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "38000:3000"
+    env_file:
+      - ./config/env_grafana  
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+      - type: bind
+        source: $PWD/config/grafana.ini
+        target: /etc/grafana/grafana.ini
+      - type: bind
+        source: $PWD/plugins
+        target: /var/lib/grafana/plugins      
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep grafana || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 2
+      start_period: 5s
+    networks:
+      - cluster
+volumes:
+  grafana-data:
+networks:
+  cluster:
+    driver: overlay
