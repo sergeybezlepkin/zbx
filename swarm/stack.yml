@@ -1,0 +1,297 @@
+version: '3.7'
+services:
+  zbxtimedb:
+    image: timescale/timescaledb-ha:pg16-ts2.14-all
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+    env_file:
+      - ./env_vars/env_db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./db/data:/var/lib/postgresql:rw
+    secrets:
+      - db_user
+      - db_password                         
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks: 
+      - cluster 
+  zbxelastic:
+    image: elasticsearch:7.17.21
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
+      resources:
+        limits:
+          memory: 4G
+      restart_policy:
+        condition: on-failure
+    env_file:
+      - ./els/config/env_zbxelastic
+    volumes:
+      - ./els:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep elastic || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+  zbxkibana:
+    image: kibana:7.17.21
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+       - "35601:5601"
+    env_file:
+       - ./env_kibana
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep kibana || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+  zbxnode1:
+    image: zabbix/zabbix-server-pgsql:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+      restart_policy:
+          condition: on-failure
+    ports:
+      - "10051:10051"
+    env_file:
+      - ./env_vars/env_zbxnode1
+      - ./env_vars/env_db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./config/var/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:rw
+      - ./config/var/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:rw
+      - ./config/var/lib/zabbix/dbscripts:/var/lib/zabbix/dbscripts:rw
+      - ./config/var/lib/zabbix/export:/var/lib/zabbix/export:rw
+      - ./config/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
+      - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+      - ./config/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
+      - ./config/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:rw
+      - ./config/var/lib/zabbix/snmptraps:/var/lib/zabbix/snmptraps:rw
+   #   - ./config/.ZBX_DB_CA_FILE:/run/secrets/root-ca.pem:ro
+   #   - ./config/.ZBX_DB_CERT_FILE:/run/secrets/client-cert.pem:ro
+   #   - ./config/.ZBX_DB_KEY_FILE:/run/secrets/client-key.pem:ro
+    secrets:
+      - db_user
+      - db_password 
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_server || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster   
+    depends_on:
+      - zbxtimedb
+      - zbxelastic
+  zbxweb:
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+      restart_policy:
+          condition: on-failure
+#    ports:
+#      - "80:8080"
+#      - "443:8443"
+    env_file:
+      - ./env_vars/env_db
+      - ./env_vars/env_web
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./config/etc/ssl/nginx:/etc/ssl/nginx:rw
+      - ./config/usr/share/zabbix/modules/:/usr/share/zabbix/modules:rw
+    #   - ./env_vars/.ZBX_DB_CA_FILE:/run/secrets/root-ca.pem:ro
+    #   - ./env_vars/.ZBX_DB_CERT_FILE:/run/secrets/client-cert.pem:ro
+    #   - ./env_vars/.ZBX_DB_KEY_FILE:/run/secrets/client-key.pem:ro
+    secrets:
+      - db_user
+      - db_password
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep php-fpm || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+    depends_on:
+      - zbxnode1
+      - zbxtimedb
+      - zbxelastic
+  zbxagent2:
+    image: zabbix/zabbix-agent2:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+    env_file:
+      - ./env_vars/env_agent2
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:rw
+      - ./config/var/lib/zabbix/modules:/var/lib/zabbix/modules:rw
+      - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+      - ./config/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:rw
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_agent2 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster 
+  zbxjava:
+    image: zabbix/zabbix-java-gateway:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      restart_policy:
+          condition: on-failure
+    ports:
+      - "10052:10052"
+    env_file:
+      - ./env_vars/env_java
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_java_gateway || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+  zbxsnmp:
+    image: zabbix/zabbix-snmptraps:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+      restart_policy:
+          condition: on-failure
+    ports:
+      - "162:8162"
+    env_file:
+      - ./env_vars/env_snmp
+    volumes:
+      - ./config/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:rw
+      - ./config/var/lib/zabbix/snmptraps:/var/lib/zabbix/snmptraps:rw
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep snmptrapd || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 2
+      start_period: 5s
+    networks:
+      - cluster
+  zbxwebservice:
+    image: zabbix/zabbix-web-service:alpine-latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      restart_policy:
+          condition: on-failure
+    ports:
+      - "10053:10053"
+    env_file:
+      - ./env_vars/env_webservice
+    volumes:
+      - ./config/var/lib/zabbix/enc:/var/lib/zabbix/enc:rw
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ps aux | grep zabbix_web_service || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+  nginx:
+    image: jc21/nginx-proxy-manager:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      restart_policy:
+          condition: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3005:81" 
+    environment:
+      - DISABLE_IPV6=true
+      - X_FRAME_OPTIONS=sameorigin
+    volumes:
+      - ./nginx/data:/data:rw
+      - ./nginx/letsencrypt:/etc/letsencrypt:rw
+    healthcheck:
+      test: ["CMD", "/bin/check-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
+    networks:
+      - cluster
+volumes:
+  els: {}
+networks:
+  cluster:
+    driver: overlay 
+secrets:
+  db_user:
+    file: $PWD/env_vars/.db_user
+  db_password:
+    file: $PWD/env_vars/.db_password
