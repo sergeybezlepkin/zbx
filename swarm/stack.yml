@@ -35,7 +35,7 @@ services:
       restart_policy:
         condition: on-failure
     env_file:
-      - ./els/config/env_zbxelastic
+      - ./env_vars/env_zbxelastic
     volumes:
       - ./els:/usr/share/elasticsearch/data
     healthcheck:
@@ -54,7 +54,7 @@ services:
     ports:
        - "35601:5601"
     env_file:
-       - ./env_kibana
+       - ./env_vars/env_kibana
     healthcheck:
       test: ["CMD", "sh", "-c", "ps aux | grep kibana || exit 1"]
       interval: 10s
@@ -273,7 +273,7 @@ services:
       - "443:443"
       - "3005:81" 
     env_file:
-      - ./nginx/config/env_nginx
+      - ./env_vars/env_nginx
     volumes:
       - ./nginx/data:/data:rw
       - ./nginx/letsencrypt:/etc/letsencrypt:rw
