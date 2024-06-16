@@ -1,7 +1,3 @@
-Плагин для загрузки тут: https://github.com/grafana/grafana-zabbix/releases
-
-Загружаем в каталог:
-wget https://github.com/grafana/grafana-zabbix/releases/download/v4.4.8/alexanderzobnin-zabbix-app-4.4.8.darwin_amd64.zip
-
-Делаем распаковку: 
-unzip alexanderzobnin-zabbix-app-4.4.8.darwin_amd64.zip
+1. Download plugin here: https://github.com/grafana/grafana-zabbix/releases
+2. Uploading to the catalog: wget https://github.com/grafana/grafana-zabbix/releases/download/v4.4.8/alexanderzobnin-zabbix-app-4.4.8.darwin_amd64.zip
+3. Unpacking: unzip alexanderzobnin-zabbix-app-4.4.8.darwin_amd64.zip
