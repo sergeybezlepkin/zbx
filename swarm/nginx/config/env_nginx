@@ -1,2 +1,0 @@
-DISABLE_IPV6='true'
-X_FRAME_OPTIONS="sameorigin"
