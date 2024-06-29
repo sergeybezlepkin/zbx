@@ -5,6 +5,7 @@ mkdir -p "$project_path"
 for folder in "${folders[@]}"; do
   mkdir -p "$project_path$folder"
 done
+
 project_path="$PWD/zbx/env_vars"
 files=("env_zbxsrv" "env_db" "env_web" "env_agent2" "env_java" "env_webservice" "env_snmp" ".db_user" ".db_password")
 mkdir -p "$project_path"
@@ -14,11 +15,13 @@ for file in "${files[@]}"; do
     echo "zabbix" > "$project_path/$file"
   fi
 done
+
  project_path="$PWD/zbx/zbxproxy/env_vars"
- files=("env_zbxproxy")
- for file in "${files[@]}"; do
-  touch "$project_path/$file"
+  files=("env_zbxproxy")
+  for file in "${files[@]}"; do
+   touch "$project_path/$file"
 done
+
 project_path="$PWD/zbx/grafana/config"
  files=("grafana.ini" ".grafana_db_user" ".grafana_db_pass" "env_grafana")
  for file in "${files[@]}"; do
@@ -28,17 +31,21 @@ project_path="$PWD/zbx/grafana/config"
   elif [ "$file" = ".grafana_db_pass" ]; then
     echo "supergrafana" > "$project_path/$file"
   fi
- project_path="$PWD/zbx/els"
+done
+
+project_path="$PWD/zbx/els"
  files=("env_zbxelastic")
  for file in "${files[@]}"; do
-  touch "$project_path/$file"
+    touch "$project_path/$file"
 done
+
 project_path="$PWD/zbx/swarm/"
 folders=("config/var/lib/zabbix/alertscripts" "/config/var/lib/zabbix/externalscripts" "/config/var/lib/zabbix/dbscripts" "/config/var/lib/zabbix/export" "/config/var/lib/zabbix/modules" "/config/var/lib/zabbix/enc" "/config/var/lib/zabbix/ssh_keys" "/config/var/lib/zabbix/mibs" "/config/var/lib/zabbix/snmptraps" "/config/etc/ssl/nginx" "/config/usr/share/zabbix/modules" "/config/etc/zabbix/zabbix_agentd.d" "/db/data" "/els" "/nginx/data" "/nginx/letsencrypt" "/grafana/plugins" "/kibana" "/logs")
 mkdir -p "$project_path"
 for folder in "${folders[@]}"; do
   mkdir -p "$project_path$folder"
 done
+
 project_path="$PWD/zbx/swarm/env_vars"
 files=("env_zbxsrv" "env_db" "env_web" "env_agent2" "env_java" "env_webservice" "env_snmp" ".db_user" ".db_password")
 mkdir -p "$project_path"
